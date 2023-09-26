@@ -26,15 +26,10 @@ static_resources:
            "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig
            tls_socket_config:
              common_tls_context:
-               # tls_params:
-               #   tls_minimum_protocol_version: TLSv1_2
-               #   tls_maximum_protocol_version: TLSv1_2
                tls_certificates:
                - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
                  private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
-               # validation_context:
-               #   trusted_ca:
-               #     filename: certs/ca.crt
+
 
   clusters:
   - name: pg_cluster
@@ -55,35 +50,6 @@ static_resources:
         tls_socket_config:
           allow_renegotiation: true
           common_tls_context:
-            # tls_params:
-            #   tls_minimum_protocol_version: TLSv1_2
-            #   tls_maximum_protocol_version: TLSv1_2
             tls_certificates:
             - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
               private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
-            # validation_context:
-            #   trusted_ca:
-            #     filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/ca.crt"
-    # error with follwoing socket: invalid length of startup packet
-    # transport_socket: 
-    #   name: envoy.transport_sockets.tls
-    #   typed_config:
-    #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-    #     common_tls_context:
-    #       tls_certificates:
-    #       - certificate_chain:
-    #           filename: certs/tls.crt
-    #         private_key:
-    #           filename: certs/tls.key
-    #       # validation_context:
-    #       #   match_typed_subject_alt_names:
-    #       #   - san_type: DNS
-    #       #     matcher:
-    #       #       exact: server-pg-tls.default.svc
-    #       #   trusted_ca:
-    #       #     filename: certs/ca.crt              
-admin:
-  address:
-    socket_address:
-      address: 0.0.0.0
-      port_value: 8001
