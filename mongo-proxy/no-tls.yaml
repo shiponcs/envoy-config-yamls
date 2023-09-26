@@ -1,0 +1,64 @@
+static_resources:
+  listeners:
+  - name: mongo_listener
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 1999
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.mongo_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.mongo_proxy.v3.MongoProxy
+          stat_prefix: egress_mongo
+      - name: envoy.filters.network.tcp_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          stat_prefix: mongo_tcp
+          cluster: mongo_cluster
+      # transport_socket:
+      #    name: envoy.transport_sockets.starttls
+      #    typed_config:
+      #      "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig
+      #      tls_socket_config:
+      #        common_tls_context:
+      #          # tls_params:
+      #          #   tls_minimum_protocol_version: TLSv1_2
+      #          #   tls_maximum_protocol_version: TLSv1_2
+      #          tls_certificates:
+      #          - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
+      #            private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
+      #          # validation_context:
+      #          #   trusted_ca:
+      #          #     filename: certs/ca.crt
+
+
+  clusters:
+  - name: mongo_cluster
+    type: STRICT_DNS
+    connect_timeout: 500s
+    load_assignment:
+      cluster_name: mongo_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 139.162.26.203
+                port_value: 27017 
+    # transport_socket:
+    #   name: envoy.transport_sockets.starttls
+    #   typed_config:
+    #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.UpstreamStartTlsConfig
+    #     tls_socket_config:
+    #       allow_renegotiation: true
+    #       common_tls_context:
+    #         tls_certificates:
+    #         - certificate_chain: {filename: "/home/user/office/mongo-test/tls.crt"}
+    #           private_key: {filename: "/home/user/office/mongo-test/tls.key"}
+
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
