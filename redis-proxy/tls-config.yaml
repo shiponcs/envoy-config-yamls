@@ -1,0 +1,66 @@
+static_resources:
+  listeners:
+  - name: redis_listener
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 1999
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.redis_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.redis_proxy.v3.RedisProxy
+          stat_prefix: egress_redis
+          settings:
+            op_timeout: 5s
+          prefix_routes:
+            catch_all_route:
+              cluster: redis_cluster
+          downstream_auth_password: {inline_string: "Bz7_xF1mLVM3c;0r"}
+          downstream_auth_username: {inline_string: "default"}
+      # transport_socket:
+      #   name: envoy.transport_sockets.tls
+      #   typed_config:
+      #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+      #     common_tls_context:
+      #       tls_certificates:
+      #       - certificate_chain:
+      #           filename: /home/user/office/rd-test/server-tls.crt
+      #         private_key:
+      #           filename: /home/user/office/rd-test/server-tls.key
+
+  clusters:
+  - name: redis_cluster
+    type: STRICT_DNS  # static
+    lb_policy: MAGLEV
+    load_assignment:
+      cluster_name: redis_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 143.42.79.218
+                port_value: 6379
+    typed_extension_protocol_options:
+      envoy.filters.network.redis_proxy:
+        "@type": type.googleapis.com/google.protobuf.Struct
+        value:
+          auth_password: {inline_string: "Bz7_xF1mLVM3c;0r"}
+          auth_username: {inline_string: "default"}
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        common_tls_context:
+          tls_certificates:
+          - certificate_chain:
+              filename: /home/user/office/rd-test/tls.crt
+            private_key:
+                filename: /home/user/office/rd-test/tls.key
+            
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
