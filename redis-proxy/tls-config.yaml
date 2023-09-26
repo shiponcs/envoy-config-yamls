@@ -18,16 +18,16 @@ static_resources:
               cluster: redis_cluster
           downstream_auth_password: {inline_string: "Bz7_xF1mLVM3c;0r"}
           downstream_auth_username: {inline_string: "default"}
-      # transport_socket:
-      #   name: envoy.transport_sockets.tls
-      #   typed_config:
-      #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-      #     common_tls_context:
-      #       tls_certificates:
-      #       - certificate_chain:
-      #           filename: /home/user/office/rd-test/server-tls.crt
-      #         private_key:
-      #           filename: /home/user/office/rd-test/server-tls.key
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+            - certificate_chain:
+                filename: /home/user/office/rd-test/server-tls.crt
+              private_key:
+                filename: /home/user/office/rd-test/server-tls.key
 
   clusters:
   - name: redis_cluster
