@@ -1,0 +1,80 @@
+static_resources:
+  listeners:
+  - name: pg_listener
+    address:
+      socket_address:
+        address: 127.0.0.1
+        port_value: 10000
+    filter_chains:
+      - filters:
+        - name: envoy.filters.network.mysql_proxy
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.mysql_proxy.v3.MySQLProxy
+            stat_prefix: mysql
+            terminate_downstream_tls: true
+            upstream_tls: false
+        - name: envoy.filters.network.tcp_proxy
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+            stat_prefix: mysql_tcp
+            cluster: mysql_cluster_notls
+        transport_socket:
+         name: envoy.transport_sockets.starttls
+         typed_config:
+           "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig
+           tls_socket_config:
+             common_tls_context:
+               # tls_params:
+               #   tls_minimum_protocol_version: TLSv1_2
+               #   tls_maximum_protocol_version: TLSv1_2
+               tls_certificates:
+               - certificate_chain: {filename: "/home/user/Desktop/Drive/certs/downLetsEncrypt/tls.crt"}
+                 private_key: {filename: "/home/user/Desktop/Drive/certs/downLetsEncrypt/tls.key"}
+               # validation_context:
+               #   trusted_ca:
+               #     filename: certs/ca.crt
+  clusters:
+  - name: mysql_cluster_tls
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: mysql_cluster_tls
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 127.0.0.1
+                port_value: 8000
+    transport_socket:
+      name: envoy.transport_sockets.starttls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.UpstreamStartTlsConfig
+        tls_socket_config:
+          allow_renegotiation: true
+          common_tls_context:
+            # tls_params:
+            #   tls_minimum_protocol_version: TLSv1_2
+            #   tls_maximum_protocol_version: TLSv1_2
+            tls_certificates:
+            - certificate_chain: {filename: "/home/user/Desktop/Drive/certs/newCPP/tls.crt"}
+              private_key: {filename: "/home/user/Desktop/Drive/certs/newCPP/tls.key"}
+            # validation_context:
+            #   trusted_ca:
+            #     filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/ca.crt"
+  - name: mysql_cluster_notls
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: mysql_cluster_notls
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 127.0.0.1
+                port_value: 8080    
+        
+admin:
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 8001

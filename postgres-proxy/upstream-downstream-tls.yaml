@@ -12,7 +12,7 @@ static_resources:
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.postgres_proxy.v3alpha.PostgresProxy
           stat_prefix: egress_pg
-          enable_sql_parsing: true
+          # enable_sql_parsing: true
           terminate_ssl: true
           upstream_ssl: REQUIRE
       - name: envoy.filters.network.tcp_proxy
@@ -27,8 +27,8 @@ static_resources:
            tls_socket_config:
              common_tls_context:
                tls_certificates:
-               - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
-                 private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
+               - certificate_chain: {filename: "/home/user/office/pg-test/new-client.crt"}
+                 private_key: {filename: "/home/user/office/pg-test/new-tls.key"}
 
 
   clusters:
@@ -41,7 +41,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: 143.42.79.215 
+                address: 172.104.38.139 
                 port_value: 5432
     transport_socket:
       name: envoy.transport_sockets.starttls
@@ -51,8 +51,8 @@ static_resources:
           allow_renegotiation: true
           common_tls_context:
             tls_certificates:
-            - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
-              private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
+            - certificate_chain: {filename: "/home/user/office/pg-test/new-client.crt"}
+              private_key: {filename: "/home/user/office/pg-test/new-tls.key"}
 
 admin:
   address:

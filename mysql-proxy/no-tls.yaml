@@ -16,21 +16,21 @@ static_resources:
           "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
           stat_prefix: mysql_tcp
           cluster: mysql_cluster
-      transport_socket:
-         name: envoy.transport_sockets.starttls
-         typed_config:
-           "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig
-           tls_socket_config:
-             common_tls_context:
-               # tls_params:
-               #   tls_minimum_protocol_version: TLSv1_2
-               #   tls_maximum_protocol_version: TLSv1_2
-               tls_certificates:
-               - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
-                 private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
-               # validation_context:
-               #   trusted_ca:
-               #     filename: certs/ca.crt
+      # transport_socket:
+      #    name: envoy.transport_sockets.starttls
+      #    typed_config:
+      #      "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig
+      #      tls_socket_config:
+      #        common_tls_context:
+      #          # tls_params:
+      #          #   tls_minimum_protocol_version: TLSv1_2
+      #          #   tls_maximum_protocol_version: TLSv1_2
+      #          tls_certificates:
+      #          - certificate_chain: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.crt"}
+      #            private_key: {filename: "/home/user/office/pg-test/upstream-downstream-tls-envoy-setup/tls.key"}
+      #          # validation_context:
+      #          #   trusted_ca:
+      #          #     filename: certs/ca.crt
 
 
   clusters:
@@ -44,21 +44,21 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: 172.104.37.137
+                address: 127.0.0.1
                 port_value: 3306
-    transport_socket:
-      name: envoy.transport_sockets.starttls
-      typed_config:
-        "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.UpstreamStartTlsConfig
-        tls_socket_config:
-          allow_renegotiation: true
-          common_tls_context:
-            # tls_params:
-            #   tls_minimum_protocol_version: TLSv1_2
-            #   tls_maximum_protocol_version: TLSv1_2
-            tls_certificates:
-            - certificate_chain: {filename: "/var/lib/certs/tls.crt"}
-              private_key: {filename: "/var/lib/certs/tls.key"}
+    # transport_socket:
+    #   name: envoy.transport_sockets.starttls
+    #   typed_config:
+    #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.starttls.v3.UpstreamStartTlsConfig
+    #     tls_socket_config:
+    #       allow_renegotiation: true
+    #       common_tls_context:
+    #         # tls_params:
+    #         #   tls_minimum_protocol_version: TLSv1_2
+    #         #   tls_maximum_protocol_version: TLSv1_2
+    #         tls_certificates:
+    #         - certificate_chain: {filename: "/var/lib/certs/tls.crt"}
+    #           private_key: {filename: "/var/lib/certs/tls.key"}
 
 admin:
   address:

@@ -23,9 +23,9 @@ static_resources:
           common_tls_context:
             tls_certificates:
             - certificate_chain:
-                filename: /home/user/office/mongo-test/mongo-auth/server.crt
+                filename: /home/user/office/mongo-test/tas-test/server/server.crt
               private_key:
-                filename: /home/user/office/mongo-test/mongo-auth/server-tls.key
+                filename: /home/user/office/mongo-test/tas-test/server/server.key
 
 
   clusters:
@@ -39,18 +39,19 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: 139.162.26.203
+                address: 139.162.26.181
                 port_value: 27017 
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        allow_renegotiation: true
         common_tls_context:
           tls_certificates:
           - certificate_chain:
-              filename: /home/user/office/mongo-test/mongo-auth/client.crt
+              filename: /home/user/office/mongo-test/tas-test/client/client.crt
             private_key:
-                filename: /home/user/office/mongo-test/mongo-auth/client-tls.key
+                filename: /home/user/office/mongo-test/tas-test/client/client.key
 
 admin:
   address:
