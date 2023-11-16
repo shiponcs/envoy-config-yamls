@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: envoy-proxy
+  namespace: cpp
+spec:
+  type: LoadBalancer
+  ports:
+  - name: listener
+    port: 29092
+    targetPort: 10000
+  - name: admin
+    port: 8001
+  selector:
+    app: envoy-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-proxy
+  namespace: cpp
+spec:
+  selector:
+    matchLabels:
+      app: envoy-proxy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: envoy-proxy
+    spec:
+      containers:
+      - image: shiponcs/envoy-contrib:v1.29-ac
+        imagePullPolicy: IfNotPresent
+        name: envoy-contrib
+        ports:
+        - name: admin
+          containerPort: 8001 
+        - name: listener
+          containerPort: 10000
+        # - name: extra
+        #   containerPort: 9901
+        volumeMounts:
+        - name: config
+          mountPath: /etc/envoy/
+        - name: server-tls
+          mountPath: server/
+        - name: client-tls
+          mountPath: client/
+      volumes:
+      - name: config
+        configMap:
+          name: kf-config-mut
+      - name: client-tls 
+        secret:
+          secretName: kf-tls-client-cert
+      - name: server-tls
+        secret:
+          secretName: kf-tls-stand-server-cert

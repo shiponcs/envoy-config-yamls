@@ -42,19 +42,19 @@ static_resources:
                 socket_address:
                   address: 127.0.0.1 # Kafka broker's host
                   port_value: 29092 # Kafka broker's port.
-    # transport_socket:
-    #   name: envoy.transport_sockets.tls
-    #   typed_config:
-    #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-    #     common_tls_context:
-    #       tls_certificates:
-    #       - certificate_chain:
-    #           filename: /home/user/office/kf-test/kf-client-tls.crt
-    #         private_key:
-    #             filename: /home/user/office/kf-test/kf-client-tls.key
-    #       # validation_context: 
-    #       #   trusted_ca: 
-    #       #     filename: /home/user/office/kf-test/kf-client-ca-1.crt
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        common_tls_context:
+          tls_certificates:
+          - certificate_chain:
+              filename: /home/user/office/kf-test/kf-client-tls.crt
+            private_key:
+                filename: /home/user/office/kf-test/kf-client-tls.key
+          # validation_context: 
+          #   trusted_ca: 
+          #     filename: /home/user/office/kf-test/kf-client-ca-1.crt
 admin:
   address:
     socket_address:
