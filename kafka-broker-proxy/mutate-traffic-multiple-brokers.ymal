@@ -1,0 +1,74 @@
+static_resources:
+  listeners:
+  - address: 
+      socket_address:
+        address: 0.0.0.0
+        port_value: 10000          
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.kafka_broker
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.kafka_broker.v3.KafkaBroker
+          stat_prefix: exampleprefix1
+          # force_response_rewrite: true
+          id_based_broker_address_rewrite_spec:  &kafka_rewrite_spec
+            rules:
+            - id: 0
+              host: 172.232.99.179
+              port: 9092
+            - id: 1
+              host: 172.232.99.179
+              port: 9093
+      - name: envoy.filters.network.tcp_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          stat_prefix: tcp
+          cluster: broker0cluster
+  - address: # This listener proxies broker 2.
+      socket_address:
+        address: 0.0.0.0
+        port_value: 10001
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.kafka_broker
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.kafka_broker.v3.KafkaBroker
+          stat_prefix: exampleprefix2
+          id_based_broker_address_rewrite_spec: *kafka_rewrite_spec
+      - name: envoy.filters.network.tcp_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          stat_prefix: tcp
+          cluster: broker1cluster
+  clusters:
+  - name: broker0cluster
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: some_service
+      endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: kafka-prod-broker-0.kafka-prod-broker.cpp.svc.cluster.local
+                  port_value: 9092
+  - name: broker1cluster
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: some_service
+      endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: kafka-prod-broker-1.kafka-prod-broker.cpp.svc.cluster.local
+                  port_value: 9092
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
