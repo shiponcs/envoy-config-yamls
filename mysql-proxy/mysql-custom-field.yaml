@@ -1,3 +1,6 @@
+# see the change of proto file:
+# https://github.com/shiponcs/envoy-ac/commit/c965adff9293fccf127b9c617905572321b8c42f#diff-63a0cbb40908224333fce00ea033b8edd0d12d3771e18cfc8f8c0c19d0fb024aR30
+
 static_resources:
   listeners:
   - name: mysql_listener
