@@ -1,0 +1,49 @@
+# See the changed modified proto here: 
+# https://github.com/shiponcs/envoy-ac/blob/9b88efcec40b42722cfaa4c9dd2e2e9659862071/api/contrib/envoy/extensions/filters/network/mysql_proxy/v3/mysql_proxy.proto#L41
+
+static_resources:
+  listeners:
+  - name: mysql_listener
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 1999
+    filter_chains:
+      - filters:
+        - name: envoy.filters.network.mysql_proxy
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.mysql_proxy.v3.MySQLProxy
+            stat_prefix: mysql
+        - name: envoy.filters.network.tcp_proxy
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+            stat_prefix: mysql_tcp
+            cluster: mysql-cluster
+      
+  clusters:
+  - name: mysql_cluster
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: mysql_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 172.104.37.137
+                port_value: 3306
+    typed_extension_protocol_options:
+      envoy.filters.network.mysql_proxy:
+        "@type": type.googleapis.com/envoy.extensions.filters.network.mysql_proxy.v3.MySQLProtocolOptions
+        auth_password: "cluster 1 password"
+        user_maps:
+          - ldap_username: ldap1+
+            mysql_username: mysql1+
+          - ldap_username: ldap2+
+            mysql_username: mysql2+
+        
+admin:
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 8001
